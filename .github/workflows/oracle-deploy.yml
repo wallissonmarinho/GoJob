@@ -121,7 +121,7 @@ jobs:
           GOJOB_GHCR_OWNER: ${{ steps.ghcr.outputs.owner }}
           GOJOB_IMAGE_TAG: main
           SYNC_URL: ${{ vars.SYNC_URL }}
-          API_KEY: ${{ secrets.API_KEY }}
+          API_KEY: ${{ vars.API_KEY }}
           GOJOB_ENV_B64: ${{ vars.GOJOB_ENV_B64 }}
         with:
           host: ${{ vars.OCI_VM_HOST || secrets.OCI_VM_HOST }}

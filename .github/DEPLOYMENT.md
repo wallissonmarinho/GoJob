@@ -28,6 +28,7 @@ Add these as **Repository Variables** or in the **prd** environment:
 | `OCI_VM_USER` | yes | `ubuntu` | SSH user on the VM |
 | `OCI_DEPLOY_ROOT` | no | `/opt/go` | Root directory for deployments |
 | `SYNC_URL` | yes | `https://goanimes.example.com/admin/sync` | HTTP sync endpoint URL |
+| `API_KEY` | yes | `your-api-key` | API key for authentication |
 | `GOJOB_ENV_B64` | no | (base64) | Additional env vars as base64 |
 
 ### Secrets (Sensitive)
@@ -37,7 +38,6 @@ Add these as **Repository Secrets** or in the **prd** environment:
 | Secret | Required | Description |
 |--------|----------|-------------|
 | `OCI_SSH_PRIVATE_KEY` | yes | SSH private key for connecting to VM (PEM format) |
-| `API_KEY` | yes | API key for authentication |
 
 ---
 
@@ -64,21 +64,18 @@ chmod 600 ~/.ssh/authorized_keys
 
 **Repository Settings → Secrets and variables → Actions**
 
+Only one secret is required:
+
 #### Add `OCI_SSH_PRIVATE_KEY`
 
 ```bash
 # Copy the private key
-cat ~/.ssh/gojob_deploy | pbcopy
+cat ~/.ssh/id_ed25519 | pbcopy
 ```
 
 In GitHub:
 - Name: `OCI_SSH_PRIVATE_KEY`
 - Value: (paste the private key)
-
-#### Add `API_KEY`
-
-- Name: `API_KEY`
-- Value: (your actual API key)
 
 ### 4️⃣ Add Variables to GitHub
 
@@ -89,6 +86,7 @@ OCI_VM_HOST=your-vm.example.com
 OCI_VM_USER=ubuntu
 OCI_DEPLOY_ROOT=/opt/go
 SYNC_URL=https://goanimes.example.com/admin/sync
+API_KEY=your-actual-api-key
 ```
 
 ### 5️⃣ Setup K3s VM
