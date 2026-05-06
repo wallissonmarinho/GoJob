@@ -27,25 +27,28 @@ Isso copia o conteúdo encoded em base64 para clipboard.
 3. Nome: `KUBECONFIG`
 4. Cole o valor copiado acima
 
-### 3️⃣ Criar ConfigMap e Secret no k3s
+### 3️⃣ Criar Secret no k3s
+
+Consolidado em um único secret `gojob-env`:
 
 ```bash
-# Criar ConfigMap com URL do endpoint
-kubectl create configmap gojob-config \
-  --from-literal=sync-url=https://seu-endpoint/sync \
+# Opção 1: Comando kubectl
+kubectl create secret generic gojob-env \
+  --from-literal=SYNC_URL=https://seu-endpoint/sync \
+  --from-literal=API_KEY=seu-api-key-aqui \
   -n default
 
-# Criar Secret com API key
-kubectl create secret generic gojob-secrets \
-  --from-literal=api-key=seu-api-key-aqui \
-  -n default
+# Opção 2: Aplicar manifesto (depois editar com seus valores)
+kubectl apply -f deploy/k8s/cronjob.yaml
+# Edite o Secret antes de aplicar com seus valores reais
 ```
 
-Ou aplique com manifesto:
+### ✏️ Editar Secret Existente
 
 ```bash
-# Edite deploy/k8s/cronjob.yaml com seus valores
-kubectl apply -f deploy/k8s/cronjob.yaml
+kubectl edit secret gojob-env -n default
+# Base64 encode seus valores:
+# echo -n "seu-valor" | base64
 ```
 
 ## 🔑 Variáveis de Ambiente

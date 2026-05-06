@@ -56,6 +56,15 @@ go build -o gojob ./cmd/gojob
 
 ---
 
+## 📝 Environment Variables Reference
+
+| Variable | Type | Required | Description |
+|----------|------|----------|-------------|
+| `SYNC_URL` | string | yes | HTTP sync endpoint URL (e.g., `https://api.example.com/sync`) |
+| `API_KEY` | string | yes | API key for authentication (Bearer token) |
+
+---
+
 ## 🐳 Docker
 
 ### Build Image
@@ -86,15 +95,22 @@ docker build -t your-registry/gojob:latest .
 docker push your-registry/gojob:latest
 ```
 
-2. **Update deployment manifests** with:
-   - Your container registry URL
-   - Sync endpoint URL
-   - API key for authentication
+2. **Create Secret with credentials:**
+
+```bash
+kubectl create secret generic gojob-env \
+  --from-literal=SYNC_URL=https://your-endpoint/sync \
+  --from-literal=API_KEY=your-api-key \
+  -n default
+```
 
 ### Deploy CronJob
 
 ```bash
-# Apply manifests (creates ConfigMap, Secret, and CronJob)
+# Update image reference in cronjob.yaml
+sed -i 's|gojob:latest|your-registry/gojob:latest|g' deploy/k8s/cronjob.yaml
+
+# Apply manifests
 kubectl apply -f deploy/k8s/cronjob.yaml
 
 # Verify
@@ -105,22 +121,25 @@ kubectl logs -l app=gojob-sync --tail=50
 
 ### Configuration via K8s
 
-Edit `deploy/k8s/cronjob.yaml`:
+The CronJob uses a consolidated Secret `gojob-env`:
 
 ```yaml
-# ConfigMap - update sync URL
-data:
-  sync-url: "<your-sync-url>"
-
-# Secret - update API key
-stringData:
-  api-key: "your-actual-api-key"
+envFrom:
+- secretRef:
+    name: gojob-env
 ```
 
-Then reapply:
+Update the secret:
 
 ```bash
-kubectl apply -f deploy/k8s/cronjob.yaml
+# Edit existing secret
+kubectl edit secret gojob-env -n default
+
+# Or recreate:
+kubectl delete secret gojob-env -n default
+kubectl create secret generic gojob-env \
+  --from-literal=SYNC_URL=https://new-endpoint/sync \
+  --from-literal=API_KEY=new-api-key
 ```
 
 ### Customizing CronJob Schedule

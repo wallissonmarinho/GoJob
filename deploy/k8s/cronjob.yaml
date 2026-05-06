@@ -39,20 +39,9 @@ spec:
             - sync
             - --verbose
             
-            env:
-            # Sync endpoint URL
-            - name: SYNC_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: gojob-config
-                  key: sync-url
-            
-            # API key for authentication
-            - name: API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: gojob-secrets
-                  key: api-key
+            envFrom:
+            - secretRef:
+                name: gojob-env
             
             resources:
               requests:
@@ -70,21 +59,13 @@ spec:
 
 ---
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gojob-config
-  namespace: default
-data:
-  # Update with your actual sync endpoint URL
-  sync-url: "<your-sync-url>"
-
----
-apiVersion: v1
 kind: Secret
 metadata:
-  name: gojob-secrets
+  name: gojob-env
   namespace: default
 type: Opaque
 stringData:
+  # Update with your actual sync endpoint URL
+  SYNC_URL: "<your-sync-url>"
   # Update with your actual API key
-  api-key: "change-me-with-real-key"
+  API_KEY: "change-me-with-real-key"
