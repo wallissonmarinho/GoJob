@@ -5,11 +5,15 @@ import (
 	"os"
 
 	urfavecli "github.com/urfave/cli/v2"
+	"github.com/wallissonmarinho/GoJob/internal/app/config"
 )
 
 func main() {
+	// Load configuration from environment variables
+	cfg := config.Load()
+
 	// Build commands using factory pattern with a provided executor factory
-	commandFactory := BuildCommandFactory()
+	commandFactory := BuildCommandFactory(cfg)
 
 	app := &urfavecli.App{
 		Name:        "gojob",

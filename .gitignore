@@ -28,6 +28,13 @@ vendor/
 .vendor/
 
 # Build output
+bin/
+dist/
+gojob
+
+# Environment variables
+.env
+.env.local
 /bin/
 /gojob
 

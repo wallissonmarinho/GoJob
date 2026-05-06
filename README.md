@@ -17,25 +17,27 @@ go build -o gojob ./cmd/gojob
 ### Run (Local)
 
 ```bash
-# Show help
+# 1. Copy .env.example to .env and update with your values
+cp .env.example .env
+# Edit .env with your SYNC_URL and API_KEY
+
+# 2. Show help
 ./gojob --help
 ./gojob sync --help
 
-# Basic sync (uses env vars or defaults)
+# 3. Basic sync (uses env vars from .env)
 ./gojob sync
 
-# With explicit URL and API key
-./gojob sync \
-  --url <your-sync-url> \
-  --api-key your-api-key
+# 4. With explicit URL and API key
+export SYNC_URL=<your-sync-url>
+export API_KEY=your-api-key
+./gojob sync
 
-# Verbose mode
-./gojob sync --verbose \
-  --url <your-sync-url> \
-  --api-key your-api-key
+# 5. Verbose mode
+./gojob sync --verbose
 
-# Custom timeout (30s default)
-./gojob sync --timeout 60 --api-key your-api-key
+# 6. Custom timeout (30s default)
+./gojob sync --timeout 60
 ```
 
 ---
@@ -58,10 +60,28 @@ go build -o gojob ./cmd/gojob
 
 ## 📝 Environment Variables Reference
 
-| Variable | Type | Required | Description |
-|----------|------|----------|-------------|
-| `SYNC_URL` | string | yes | HTTP sync endpoint URL (e.g., `https://api.example.com/sync`) |
-| `API_KEY` | string | yes | API key for authentication (Bearer token) |
+| Variable | Type | Required | Default | Description |
+|----------|------|----------|---------|-------------|
+| `SYNC_URL` | string | yes | - | HTTP sync endpoint URL (e.g., `https://api.example.com/sync`) |
+| `API_KEY` | string | yes | - | API key for Bearer token authentication |
+| `TIMEOUT` | duration | no | `30s` | Request timeout (e.g., `45s`, `1m`) |
+| `VERBOSE` | bool | no | `false` | Enable verbose logging (`true`, `1`, or `yes`) |
+
+### Example `.env` File
+
+```bash
+# HTTP Sync Endpoint
+SYNC_URL=https://goanimes.example.com/admin/sync
+
+# API Authentication
+API_KEY=your-secret-api-key-here
+
+# Optional: Custom timeout
+TIMEOUT=45s
+
+# Optional: Verbose logging
+VERBOSE=true
+```
 
 ---
 
